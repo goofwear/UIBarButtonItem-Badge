@@ -46,8 +46,8 @@ NSString const *UIBarButtonItem_badgeValueKey = @"UIBarButtonItem_badgeValueKey"
     self.badgeBGColor   = [UIColor redColor];
     self.badgeTextColor = [UIColor whiteColor];
     self.badgeFont      = [UIFont systemFontOfSize:12.0];
-    self.badgePadding   = 6;
-    self.badgeMinSize   = 8;
+    self.badgePadding   = 3;
+    self.badgeMinSize   = 4;
     self.badgeOriginX   = defaultOriginX;
     self.badgeOriginY   = -4;
     self.shouldHideBadgeAtZero = YES;
@@ -110,11 +110,12 @@ NSString const *UIBarButtonItem_badgeValueKey = @"UIBarButtonItem_badgeValueKey"
 - (void)updateBadgeValueAnimated:(BOOL)animated
 {
     // Bounce animation on badge if value changed and if animation authorized
-    if (animated && self.shouldAnimateBadge && ![self.badge.text isEqualToString:self.badgeValue]) {
+    if (animated && self.shouldAnimateBadge) {
         CABasicAnimation * animation = [CABasicAnimation animationWithKeyPath:@"transform.scale"];
         [animation setFromValue:[NSNumber numberWithFloat:1.5]];
         [animation setToValue:[NSNumber numberWithFloat:1]];
-        [animation setDuration:0.2];
+        [animation setDuration:1.7];
+        [animation setRepeatCount:INFINITY];
         [animation setTimingFunction:[CAMediaTimingFunction functionWithControlPoints:.4f :1.3f :1.f :1.f]];
         [self.badge.layer addAnimation:animation forKey:@"bounceAnimation"];
     }
@@ -122,14 +123,7 @@ NSString const *UIBarButtonItem_badgeValueKey = @"UIBarButtonItem_badgeValueKey"
     // Set the new value
     self.badge.text = self.badgeValue;
     
-    // Animate the size modification if needed
-    if (animated && self.shouldAnimateBadge) {
-        [UIView animateWithDuration:0.2 animations:^{
-            [self updateBadgeFrame];
-        }];
-    } else {
-        [self updateBadgeFrame];
-    }
+    [self updateBadgeFrame];
 }
 
 - (UILabel *)duplicateLabel:(UILabel *)labelToCopy
